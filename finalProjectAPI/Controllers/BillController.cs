@@ -1,6 +1,14 @@
+using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Net.Http.Json;
+using System.Text;
+using finalProjectApplication;
 using FinalProjectApplication;
+using FinalProjectDB;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace FinalProjectApi
 {
@@ -47,7 +55,12 @@ namespace FinalProjectApi
                 {
                     return Requests.Response(this, new ApiStatus(406), isMessage, "Error");
                 }
-                return Requests.Response(this, new ApiStatus(200), isMessage, "Bill Payment SUCCESS");
+                return Requests.Response(
+                    this,
+                    new ApiStatus(200),
+                    isMessage,
+                    "Bill Payment SUCCESS"
+                );
             }
             catch (Exception ex)
             {
@@ -66,7 +79,107 @@ namespace FinalProjectApi
                 {
                     return Requests.Response(this, new ApiStatus(406), isMessage, "Error");
                 }
-                return Requests.Response(this, new ApiStatus(200), isMessage, "Bill Payment CANCEL");
+                return Requests.Response(
+                    this,
+                    new ApiStatus(200),
+                    isMessage,
+                    "Bill Payment CANCEL"
+                );
+            }
+            catch (Exception ex)
+            {
+                return Requests.Response(this, new ApiStatus(500), null, ex.Message);
+            }
+        }
+
+        [HttpGet("GetBill")]
+        public async Task<IActionResult> GetBillDetailll([FromQuery] string poNumber)
+        {
+            try
+            {
+                var data = await _billAppService.GetRandomNumber(poNumber);
+                if (data.Length < 1)
+                {
+                    return Requests.Response(
+                        this,
+                        new ApiStatus(404),
+                        null,
+                        $"database customer is empty"
+                    );
+                }
+                ChargeSuccessDto chargeSuccessDto = new ChargeSuccessDto();
+                chargeSuccessDto = JsonConvert.DeserializeObject<ChargeSuccessDto>(data);
+                return Requests.Response(
+                    this,
+                    new ApiStatus(200),
+                    chargeSuccessDto,
+                    ""
+                );
+            }
+            catch (Exception ex)
+            {
+                return Requests.Response(this, new ApiStatus(500), null, ex.Message);
+            }
+        }
+
+        [HttpPost("CreateMidtrans")]
+        public async Task<IActionResult> CreateMidtrans([FromBody] CreatePaymentDto dto)
+        {
+            try
+            {
+                var data = await _billAppService.CreatePayment(dto);
+                SuccessDto successDto = new SuccessDto();
+                successDto = JsonConvert.DeserializeObject<SuccessDto>(data);
+
+                return Requests.Response(
+                    this,
+                    new ApiStatus(200),
+                    successDto,
+                    ""
+                );
+            }
+            catch (Exception ex)
+            {
+                return Requests.Response(this, new ApiStatus(500), null, ex.Message);
+            }
+        }
+        [HttpPost("CreateCharge")]
+        public async Task<IActionResult> CreateCharge([FromBody] ChargeDto dto)
+        {
+            try
+            {
+                var data = await _billAppService.CreateCharge(dto);
+                ChargeSuccessDto chargeSuccessDto = new ChargeSuccessDto();
+                chargeSuccessDto = JsonConvert.DeserializeObject<ChargeSuccessDto>(data);
+
+                return Requests.Response(
+                    this,
+                    new ApiStatus(200),
+                    chargeSuccessDto,
+                    ""
+                );
+            }
+            catch (Exception ex)
+            {
+                return Requests.Response(this, new ApiStatus(500), null, ex.Message);
+            }
+        }
+
+        [HttpPost("CancelCharge")]
+        public async Task<IActionResult> CancelCharge([FromQuery] string orderId)
+        {
+            try
+            {
+                var data = await _billAppService.CancelCharge(orderId);
+                ChargeSuccessDto chargeSuccessDto = new ChargeSuccessDto();
+                chargeSuccessDto = JsonConvert.DeserializeObject<ChargeSuccessDto>(data);
+
+                return Requests.Response(
+                    this,
+                    new ApiStatus(200),
+                    chargeSuccessDto,
+                    ""
+                );
             }
             catch (Exception ex)
             {

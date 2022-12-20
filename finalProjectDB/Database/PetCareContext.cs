@@ -19,6 +19,8 @@ namespace FinalProjectDB
         public DbSet<PetType> PetType { get; set; }
         public DbSet<Province> Province { get; set; }
         public DbSet<City> City { get; set; }
+        public DbSet<TransactionDetails> TransactionDetails { get; set; }
+        public DbSet<ItemDetail> ItemDetail { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
