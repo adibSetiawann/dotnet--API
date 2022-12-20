@@ -17,5 +17,13 @@ namespace FinalProjectDB
         public int BranchOfficeId { get; set; }
         public virtual BranchOffice BranchOffice { get; set; }
         public virtual ICollection<BillDetail> BillDetail { get; set; }
+        public string OrderId { get; set; }
+        public string PaymentType { get; set; }
+
+        // public string PaymentMethod { get; set; }
+        public DateTime TransactionTime { get; set; }
+        public string TransactionStatus { get; set; }
+        public string VaNumber { get; set; }
+        public string Bank { get; set; }
     }
 }
