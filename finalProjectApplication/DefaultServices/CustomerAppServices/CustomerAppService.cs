@@ -12,6 +12,9 @@ using FinalProjectDB;
 using MailKit.Net.Smtp;
 using Microsoft.EntityFrameworkCore;
 using MimeKit;
+using Quartz;
+using Quartz.Impl;
+using Quartz.Logging;
 
 namespace finalProjectApplication.DefaultServices.CustomerAppServices
 {
@@ -83,7 +86,7 @@ namespace finalProjectApplication.DefaultServices.CustomerAppServices
                 string body = "Klik link to update password";
                 var email = new MimeMessage();
                 email.From.Add(MailboxAddress.Parse("bart.hahn77@ethereal.email"));
-                email.To.Add(MailboxAddress.Parse($"{email}"));
+                email.To.Add(MailboxAddress.Parse($"{emaill}"));
 
                 email.Subject = "Forgot Password ";
                 email.Body = new TextPart(MimeKit.Text.TextFormat.Html) { Text = body };
@@ -183,6 +186,31 @@ namespace finalProjectApplication.DefaultServices.CustomerAppServices
                 return customerDto;
             }
             return null;
+        }
+
+        public async Task<(bool, string)> SendEmail()
+        {
+            LogProvider.SetCurrentLogProvider(new ConsoleLogProvider());
+
+            StdSchedulerFactory factory = new StdSchedulerFactory();
+            IScheduler scheduler = await factory.GetScheduler();
+            
+            await scheduler.Start();
+            
+            IJobDetail job = JobBuilder.Create<SendEmail>().WithIdentity("job1", "group1").Build();
+
+            ITrigger trigger = TriggerBuilder
+                .Create()
+                .WithIdentity("trigger1", "group1")
+                .StartNow()
+                .WithSimpleSchedule(x => x.WithIntervalInSeconds(10).RepeatForever())
+                .Build();
+
+            await scheduler.ScheduleJob(job, trigger);
+            await Task.Delay(TimeSpan.FromSeconds(60));
+            await scheduler.Shutdown();
+
+            return await Task.Run(() => (true, "Success"));
         }
 
         public async Task<(bool, string)> Update(UpdateCustomerDto model)

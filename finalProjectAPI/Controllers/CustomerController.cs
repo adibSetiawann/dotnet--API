@@ -203,6 +203,25 @@ namespace finalProjectAPI.Controllers
                 return Requests.Response(this, new ApiStatus(500), null, ex.Message);
             }
         }
+
+        [HttpGet("SendEmail")]
+        // [Authorize]
+        public async Task<IActionResult> SendEmail()
+        {
+            try
+            {
+                var (isSend, isMessage) = await _customerAppService.SendEmail();
+                if (!isSend)
+                {
+                    return Requests.Response(this, new ApiStatus(406), isMessage, "error");
+                }
+                return Requests.Response(this, new ApiStatus(200), isMessage, "Success");
+            }
+            catch (Exception ex)
+            {
+                return Requests.Response(this, new ApiStatus(500), null, ex.Message);
+            }
+        }
     }
 }
 

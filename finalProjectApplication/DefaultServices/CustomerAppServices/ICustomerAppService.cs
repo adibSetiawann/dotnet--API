@@ -19,5 +19,6 @@ namespace finalProjectApplication.DefaultServices.CustomerAppServices
         CreateCustomerDto SearchCustomerById(Guid searchId);
         Task<(bool, string)> ForgotPassword(string email);
         Task<(bool, string)> UpdatePassword(string password, string email);
+        Task<(bool, string)> SendEmail();
     }
 }
