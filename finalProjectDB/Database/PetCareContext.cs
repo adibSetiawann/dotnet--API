@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ValueGeneration;
 using Microsoft.Extensions.Configuration;
 
 namespace FinalProjectDB
@@ -6,7 +7,6 @@ namespace FinalProjectDB
     public class PetCareContext : DbContext
     {
         public PetCareContext(DbContextOptions<PetCareContext> options) : base(options) { }
-
         public DbSet<Bill> Bill { get; set; }
         public DbSet<BillDetail> BillDetail { get; set; }
         public DbSet<BranchOffice> BranchOffice { get; set; }
@@ -19,19 +19,21 @@ namespace FinalProjectDB
         public DbSet<PetType> PetType { get; set; }
         public DbSet<Province> Province { get; set; }
         public DbSet<City> City { get; set; }
-        public DbSet<TransactionDetails> TransactionDetails { get; set; }
-        public DbSet<ItemDetail> ItemDetail { get; set; }
+        public DbSet<EmailStatus> EmailStatus { get; set; }
+        
+        // public DbSet<TransactionDetails> TransactionDetails { get; set; }
+        // public DbSet<ItemDetail> ItemDetail { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder
                 .Entity<BillDetail>()
                 .Property(e => e.BillDetailId)
-                .HasDefaultValueSql("gen_random_uuid()");
+                .HasValueGenerator<GuidValueGenerator>();
             modelBuilder
                 .Entity<Customer>()
                 .Property(e => e.CustomerId)
-                .HasDefaultValueSql("gen_random_uuid()");
+                .HasValueGenerator<GuidValueGenerator>();
             modelBuilder
                 .Entity<Customer>()
                 .Property(lu => lu.CreatedAt)
@@ -47,6 +49,12 @@ namespace FinalProjectDB
                 .Property(lu => lu.CreatedAt)
                 .ValueGeneratedOnAddOrUpdate()
                 .HasDefaultValueSql("now()");
+            modelBuilder
+                .Entity<EmailStatus>()
+                .Property(lu => lu.CreatedAt)
+                .ValueGeneratedOnAddOrUpdate()
+                .HasDefaultValueSql("now()");
+            // modelBuilder.Entity<Gender>().HasData();
         }
     }
 }

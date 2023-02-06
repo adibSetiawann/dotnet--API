@@ -137,7 +137,7 @@ namespace FinalProjectApi
                 {
                     return Requests.Response(this, new ApiStatus(404), null, $"data with id {id} not found in the database");
                 }
-                return Requests.Response(this, new ApiStatus(200), data, "");
+                return Requests.Response(this, new ApiStatus(200), "",data);
             }
             catch (Exception ex)
             {
@@ -155,7 +155,7 @@ namespace FinalProjectApi
                 {
                     return Requests.Response(this, new ApiStatus(404), null, $"data with name {name} not found in the database");
                 }
-                return Requests.Response(this, new ApiStatus(200), data, "");
+                return Requests.Response(this, new ApiStatus(200), "", data);
             }
             catch (Exception ex)
             {
@@ -173,7 +173,7 @@ namespace FinalProjectApi
                 {
                     return Requests.Response(this, new ApiStatus(404), null, "data not found in this city");
                 }
-                return Requests.Response(this, new ApiStatus(200), data, "");
+                return Requests.Response(this, new ApiStatus(200), "", data);
             }
             catch (Exception ex)
             {
@@ -191,7 +191,7 @@ namespace FinalProjectApi
                 {
                     return Requests.Response(this, new ApiStatus(404), null, "database doctor is empty ");
                 }
-                return Requests.Response(this, new ApiStatus(200), data, "");
+                return Requests.Response(this, new ApiStatus(200), "", data);
             }
             catch (Exception ex)
             {

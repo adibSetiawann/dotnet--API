@@ -83,7 +83,7 @@ namespace FinalProjectApi
             try
             {
                 var data = await _petAppService.SearchPetByName(name);
-                return Requests.Response(this, new ApiStatus(200), data, "");
+                return Requests.Response(this, new ApiStatus(200), "", data);
             }
             catch (Exception ex)
             {
@@ -97,7 +97,7 @@ namespace FinalProjectApi
             try
             {
                 var data = await _petAppService.SearchPetByCustomer(customer);
-                return Requests.Response(this, new ApiStatus(200), data, "");
+                return Requests.Response(this, new ApiStatus(200), "", data);
             }
             catch (Exception ex)
             {
@@ -116,7 +116,7 @@ namespace FinalProjectApi
                 {
                     return NotFound();
                 }
-                return Requests.Response(this, new ApiStatus(200), data, "");
+                return Requests.Response(this, new ApiStatus(200), "", data);
             }
             catch (Exception ex)
             {

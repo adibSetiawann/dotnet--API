@@ -1,11 +1,12 @@
-using FinalProjectApplication;
-using FinalProjectDB;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
-using Microsoft.OpenApi.Models;
 using System.Text;
 using finalProjectApplication.DefaultServices.CustomerAppServices;
+using finalProjectApplication.DefaultServices.ValidationUserServices;
+using FinalProjectApplication;
+using FinalProjectDB;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -38,6 +39,7 @@ builder.Services.AddScoped<IBillDetailAppService, BillDetailAppService>();
 builder.Services.AddScoped<IBillAppService, BillAppService>();
 builder.Services.AddScoped<IDoctorAppService, DoctorAppService>();
 builder.Services.AddScoped<ICustomerAppService, CustomerAppService>();
+builder.Services.AddScoped<IValidationUser, ValidationUser>();
 builder.Services.AddAutoMapper(typeof(ConfigurationProfile));
 builder.Services.AddControllers();
 

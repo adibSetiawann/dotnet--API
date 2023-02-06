@@ -1,11 +1,11 @@
-﻿using finalProjectApplication.DefaultServices.CustomerAppServices;
+﻿using System.IdentityModel.Tokens.Jwt;
+using System.Text;
+using finalProjectApplication.DefaultServices.CustomerAppServices;
 using finalProjectApplication.DefaultServices.CustomerAppServices.Dto;
 using FinalProjectApplication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
-using System.Text;
 
 namespace finalProjectAPI.Controllers
 {
@@ -42,9 +42,9 @@ namespace finalProjectAPI.Controllers
             return response;
         }
 
-        private UserModel AuthenticateUser(UserModel login)
+        private UserModel? AuthenticateUser(UserModel login)
         {
-            UserModel user = null;
+            UserModel? user = null;
 
             var customer = _customerAppService.SearchCustomerPhone(login.MobilePhoneNumber, login.Password);
 
@@ -84,7 +84,7 @@ namespace finalProjectAPI.Controllers
                 {
                     return Requests.Response(this, new ApiStatus(406), isMessage, "Error");
                 }
-                return Requests.Response(this, new ApiStatus(201), isMessage, "Created");
+                return Requests.Response(this, new ApiStatus(201), isMessage, model);
             }
             catch (Exception ex)
             {
@@ -140,7 +140,7 @@ namespace finalProjectAPI.Controllers
                 {
                     return Requests.Response(this, new ApiStatus(404), null, $"{name} not found in the database");
                 }
-                return Requests.Response(this, new ApiStatus(200), data, "");
+                return Requests.Response(this, new ApiStatus(200), $"name {name} found in database", "");
             }
             catch (Exception ex)
             {
@@ -158,7 +158,7 @@ namespace finalProjectAPI.Controllers
                 {
                     return Requests.Response(this, new ApiStatus(404), null, $"database customer is empty");
                 }
-                return Requests.Response(this, new ApiStatus(200), data, "");
+                return Requests.Response(this, new ApiStatus(200), "", data);
             }
             catch (Exception ex)
             {

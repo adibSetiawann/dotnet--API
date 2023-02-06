@@ -48,7 +48,7 @@ namespace FinalProjectApi
         {
             string[] paths =
             {
-                @"Product",
+                @"ImageData",
                 productCode
             };
             string fullPath = Path.Combine(paths);

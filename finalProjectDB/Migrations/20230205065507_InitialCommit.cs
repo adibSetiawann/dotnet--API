@@ -7,7 +7,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace finalProjectDB.Migrations
 {
     /// <inheritdoc />
-    public partial class updatess : Migration
+    public partial class InitialCommit : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -16,13 +16,28 @@ namespace finalProjectDB.Migrations
                 name: "CareType",
                 columns: table => new
                 {
-                    CareTypeid = table.Column<int>(name: "CareType_id", type: "integer", nullable: false)
+                    CareTypeId = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     description = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_CareType", x => x.CareTypeid);
+                    table.PrimaryKey("PK_CareType", x => x.CareTypeId);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "EmailStatus",
+                columns: table => new
+                {
+                    ValidationUserId = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Email = table.Column<string>(type: "text", nullable: true),
+                    OtpCode = table.Column<string>(type: "text", nullable: true),
+                    Status = table.Column<string>(type: "text", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_EmailStatus", x => x.ValidationUserId);
                 });
 
             migrationBuilder.CreateTable(
@@ -68,19 +83,19 @@ namespace finalProjectDB.Migrations
                 name: "CarePrice",
                 columns: table => new
                 {
-                    CarePriceid = table.Column<int>(name: "CarePrice_id", type: "integer", nullable: false)
+                    CarePriceId = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     CareTypeId = table.Column<int>(type: "integer", nullable: false),
                     Price = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_CarePrice", x => x.CarePriceid);
+                    table.PrimaryKey("PK_CarePrice", x => x.CarePriceId);
                     table.ForeignKey(
                         name: "FK_CarePrice_CareType_CareTypeId",
                         column: x => x.CareTypeId,
                         principalTable: "CareType",
-                        principalColumn: "CareType_id",
+                        principalColumn: "CareTypeId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -90,7 +105,7 @@ namespace finalProjectDB.Migrations
                 {
                     CityId = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Description = table.Column<string>(type: "text", nullable: false),
+                    Descriptionn = table.Column<string>(type: "text", nullable: false),
                     ProvinceId = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
@@ -113,6 +128,7 @@ namespace finalProjectDB.Migrations
                     BranchOfficename = table.Column<string>(name: "BranchOffice_name", type: "text", nullable: false),
                     MobilePhoneNumber = table.Column<string>(type: "Varchar(12)", nullable: false),
                     Email = table.Column<string>(type: "text", nullable: false),
+                    Address = table.Column<string>(type: "text", nullable: false),
                     ProvinceId = table.Column<int>(type: "integer", nullable: false),
                     CityId = table.Column<int>(type: "integer", nullable: false),
                     CodePosId = table.Column<int>(type: "integer", nullable: false)
@@ -138,13 +154,13 @@ namespace finalProjectDB.Migrations
                 name: "Customer",
                 columns: table => new
                 {
-                    CustomerId = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "gen_random_uuid()"),
+                    CustomerId = table.Column<Guid>(type: "uuid", nullable: false),
                     CustomerName = table.Column<string>(type: "text", nullable: false),
                     GenderId = table.Column<int>(type: "integer", nullable: false),
                     MobilePhoneNumber = table.Column<string>(type: "Varchar(12)", nullable: false),
                     PasswordHash = table.Column<string>(type: "text", nullable: false),
-                    Email = table.Column<string>(type: "text", nullable: false),
                     IsDeleted = table.Column<bool>(type: "boolean", nullable: false),
+                    Address = table.Column<string>(type: "text", nullable: false),
                     ProvinceId = table.Column<int>(type: "integer", nullable: false),
                     CityId = table.Column<int>(type: "integer", nullable: false),
                     CodePosId = table.Column<int>(type: "integer", nullable: false),
@@ -187,11 +203,11 @@ namespace finalProjectDB.Migrations
                     PetTypeId = table.Column<int>(type: "integer", nullable: false),
                     Email = table.Column<string>(type: "text", nullable: false),
                     IsDeleted = table.Column<bool>(type: "boolean", nullable: false),
+                    Address = table.Column<string>(type: "text", nullable: false),
                     ProvinceId = table.Column<int>(type: "integer", nullable: false),
                     CityId = table.Column<int>(type: "integer", nullable: false),
                     CodePosId = table.Column<string>(type: "text", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "now()"),
-                    LastUpdated = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "now()")
                 },
                 constraints: table =>
                 {
@@ -232,7 +248,13 @@ namespace finalProjectDB.Migrations
                     BillDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "now()"),
                     BillStatus = table.Column<string>(type: "text", nullable: false),
                     CustomerId = table.Column<Guid>(type: "uuid", nullable: false),
-                    BranchOfficeId = table.Column<int>(type: "integer", nullable: false)
+                    BranchOfficeId = table.Column<int>(type: "integer", nullable: false),
+                    OrderId = table.Column<string>(type: "text", nullable: false),
+                    PaymentType = table.Column<string>(type: "text", nullable: false),
+                    TransactionTime = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    TransactionStatus = table.Column<string>(type: "text", nullable: false),
+                    VaNumber = table.Column<string>(type: "text", nullable: false),
+                    Bank = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -289,7 +311,7 @@ namespace finalProjectDB.Migrations
                 name: "BillDetail",
                 columns: table => new
                 {
-                    BillDetailId = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "gen_random_uuid()"),
+                    BillDetailId = table.Column<Guid>(type: "uuid", nullable: false),
                     BillId = table.Column<int>(type: "integer", nullable: false),
                     DoctorId = table.Column<int>(type: "integer", nullable: false),
                     PetId = table.Column<int>(type: "integer", nullable: false),
@@ -308,7 +330,7 @@ namespace finalProjectDB.Migrations
                         name: "FK_BillDetail_CarePrice_CarePriceId",
                         column: x => x.CarePriceId,
                         principalTable: "CarePrice",
-                        principalColumn: "CarePrice_id",
+                        principalColumn: "CarePriceId",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_BillDetail_Doctor_DoctorId",
@@ -423,6 +445,9 @@ namespace finalProjectDB.Migrations
                 name: "IX_Pet_PetTypeId",
                 table: "Pet",
                 column: "PetTypeId");
+            migrationBuilder.Sql(
+               "CREATE FUNCTION \"update_date_customer\"() RETURNS TRIGGER LANGUAGE PLPGSQL AS $$ BEGIN NEW.\"LastUpdated\" := now(); RETURN NEW; END; $$; CREATE TRIGGER \"UpdateTimestamp\" BEFORE INSERT OR UPDATE ON \"Customer\" FOR EACH ROW EXECUTE FUNCTION \"update_date_customer\"();"
+           );
         }
 
         /// <inheritdoc />
@@ -430,6 +455,9 @@ namespace finalProjectDB.Migrations
         {
             migrationBuilder.DropTable(
                 name: "BillDetail");
+
+            migrationBuilder.DropTable(
+                name: "EmailStatus");
 
             migrationBuilder.DropTable(
                 name: "Bill");

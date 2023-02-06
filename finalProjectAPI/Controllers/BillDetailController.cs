@@ -83,7 +83,7 @@ namespace FinalProjectApi
             try
             {
                 var data = _billDetailAppService.SearchBillDetail(billId);
-                return Requests.Response(this, new ApiStatus(200), data, "");
+                return Requests.Response(this, new ApiStatus(200), "success", data);
             }
             catch (Exception ex)
             {

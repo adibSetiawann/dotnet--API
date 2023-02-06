@@ -209,7 +209,7 @@ namespace FinalProjectApplication
         }
         public async Task<(bool, string)> ForgotPassword(string emaill)
         {
-            var customer = _petCareContext.Customer.FirstOrDefault(
+            var customer = _petCareContext.Doctor.FirstOrDefault(
                 w => w.Email.ToLower() == emaill.ToLower()
             );
             if (customer != null)

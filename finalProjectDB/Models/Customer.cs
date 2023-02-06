@@ -16,7 +16,6 @@ namespace FinalProjectDB
         [Column(TypeName = "Varchar(12)")]
         public string MobilePhoneNumber { get; set; }
         public string PasswordHash { get; set; }
-        public string Email { get; set; }
         public bool IsDeleted { get; set; }
         public string Address { get; set; }
         public int ProvinceId { get; set; }

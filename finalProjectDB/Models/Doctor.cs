@@ -25,7 +25,6 @@ namespace FinalProjectDB
         public int CityId { get; set; }
         public string CodePosId { get; set; }
         public DateTime CreatedAt { get; set; }
-        public DateTime LastUpdated { get; set; }
         public virtual Gender Gender { get; set; }
         public virtual PetType PetType { get; set; }
         public virtual ICollection<BillDetail> BillDetail { get; set; }

@@ -5,7 +5,7 @@ namespace FinalProjectApplication
     public class Requests
     {
         public static IActionResult Response(ControllerBase Controller,
-        ApiStatus statusCode, object dataValue, string msg)
+        ApiStatus statusCode, string msg, object dataValue)
         {
             var e = new ApiStatus(500);
             var _ = new

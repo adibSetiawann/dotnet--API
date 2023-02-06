@@ -2,11 +2,14 @@
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using AutoMapper;
 using finalProjectApplication.DefaultServices.CustomerAppServices.Dto;
+using finalProjectApplication.DefaultServices.ValidationUserServices;
+using finalProjectApplication.Helpers;
 using FinalProjectApplication;
 using FinalProjectDB;
 using MailKit.Net.Smtp;
@@ -21,28 +24,39 @@ namespace finalProjectApplication.DefaultServices.CustomerAppServices
     public class CustomerAppService : ICustomerAppService
     {
         readonly private PetCareContext _petCareContext;
-        readonly private IPetAppService _petAppService;
+        readonly private IValidationUser _validationUserService;
         private IMapper _mapper;
 
-        public CustomerAppService(PetCareContext petCareContext, IMapper mapper)
+        public CustomerAppService(PetCareContext petCareContext, IMapper mapper, IValidationUser validationUser)
         {
             _petCareContext = petCareContext;
             _mapper = mapper;
+            _validationUserService = validationUser;
         }
 
         public async Task<(bool, string)> Create(CreateCustomerDto model)
         {
             try
             {
+                var emailData = new EmailStatus();
+                emailData.Email = model.Email;
+                emailData.Status = "pending";
+                var generator = new RandomGenerator();
+                emailData.OtpCode = generator.RandomString(4);
+
                 var customer = _mapper.Map<Customer>(model);
                 customer.IsDeleted = false;
                 customer.PasswordHash = BCrypt.Net.BCrypt.HashPassword(customer.PasswordHash);
 
                 await _petCareContext.Database.BeginTransactionAsync();
                 _petCareContext.Customer.Add(customer);
+                _petCareContext.EmailStatus.Add(emailData);
                 await _petCareContext.SaveChangesAsync();
-
                 await _petCareContext.Database.CommitTransactionAsync();
+
+                var send = new SendOTPCode();
+                send.SendOTPCodeToEmail(model.Email, emailData.OtpCode);
+
                 return await Task.Run(() => (true, "Created"));
             }
             catch (DbException dbex)
@@ -78,8 +92,9 @@ namespace finalProjectApplication.DefaultServices.CustomerAppServices
 
         public async Task<(bool, string)> ForgotPassword(string emaill)
         {
+            // dirubah ke table validationuse
             var customer = _petCareContext.Customer.FirstOrDefault(
-                w => w.Email.ToLower() == emaill.ToLower()
+            // w => w..ToLower() == emaill.ToLower()
             );
             if (customer != null)
             {
@@ -110,7 +125,9 @@ namespace finalProjectApplication.DefaultServices.CustomerAppServices
         public async Task<PageResult<CustomerListDto>> GetAllCustomers(PageInfo pageInfo)
         {
             // var petList = ;
-            var pageResult = new PageResult<CustomerListDto> { Data = (
+            var pageResult = new PageResult<CustomerListDto>
+            {
+                Data = (
                     from customer in _petCareContext.Customer
                     join gender in _petCareContext.Gender
                         on customer.GenderId equals gender.GenderId
@@ -124,7 +141,7 @@ namespace finalProjectApplication.DefaultServices.CustomerAppServices
                         CustomerName = customer.CustomerName,
                         Gender = gender.Description,
                         MobilePhoneNumber = customer.MobilePhoneNumber,
-                        Email = customer.Email,
+                        // Email = customer.Email,
                         IsDeleted = customer.IsDeleted,
                         // Pet = _petAppService.SearchPetByCustomer(customer.CustomerId),
                         Address = customer.Address,
@@ -134,7 +151,9 @@ namespace finalProjectApplication.DefaultServices.CustomerAppServices
                         CreatedAt = customer.CreatedAt,
                         LastUpdated = customer.LastUpdated
                     }
-                ).Skip(pageInfo.Skip).Take(pageInfo.PageSize).OrderBy(w => w.CustomerId), Total = _petCareContext.Customer.Where(s => s.IsDeleted == false).Count() };
+                ).Skip(pageInfo.Skip).Take(pageInfo.PageSize).OrderBy(w => w.CustomerId),
+                Total = _petCareContext.Customer.Where(s => s.IsDeleted == false).Count()
+            };
             return await Task.Run(() => pageResult);
         }
 
@@ -161,7 +180,7 @@ namespace finalProjectApplication.DefaultServices.CustomerAppServices
                     CustomerName = customer.CustomerName,
                     Gender = gender.Description,
                     MobilePhoneNumber = customer.MobilePhoneNumber,
-                    Email = customer.Email,
+                    // Email = customer.Email,
                     IsDeleted = customer.IsDeleted,
                     Address = customer.Address,
                     Province = province.Description,
@@ -194,9 +213,9 @@ namespace finalProjectApplication.DefaultServices.CustomerAppServices
 
             StdSchedulerFactory factory = new StdSchedulerFactory();
             IScheduler scheduler = await factory.GetScheduler();
-            
+
             await scheduler.Start();
-            
+
             IJobDetail job = JobBuilder.Create<SendEmail>().WithIdentity("job1", "group1").Build();
 
             ITrigger trigger = TriggerBuilder
@@ -222,7 +241,7 @@ namespace finalProjectApplication.DefaultServices.CustomerAppServices
                 );
                 customerData.CustomerName = model.CustomerName;
                 customerData.MobilePhoneNumber = model.MobilePhoneNumber;
-                customerData.Email = model.Email;
+                // customerData.Email = model.Email;
                 customerData.GenderId = model.GenderId;
                 customerData.Address = model.Address;
                 customerData.ProvinceId = model.ProvinceId;
@@ -242,8 +261,9 @@ namespace finalProjectApplication.DefaultServices.CustomerAppServices
         }
         public async Task<(bool, string)> UpdatePassword(string password, string email)
         {
+            // diruabh ke table validation user
             var customerData = _petCareContext.Customer.FirstOrDefault(
-                w => w.Email.ToLower() == email.ToLower()
+            // w => w.Email.ToLower() == email.ToLower()
             );
             if (customerData != null)
             {

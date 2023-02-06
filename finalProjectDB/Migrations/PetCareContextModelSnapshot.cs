@@ -85,8 +85,7 @@ namespace finalProjectDB.Migrations
                 {
                     b.Property<Guid>("BillDetailId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasDefaultValueSql("gen_random_uuid()");
+                        .HasColumnType("uuid");
 
                     b.Property<int>("BillId")
                         .HasColumnType("integer");
@@ -219,8 +218,7 @@ namespace finalProjectDB.Migrations
                 {
                     b.Property<Guid>("CustomerId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasDefaultValueSql("gen_random_uuid()");
+                        .HasColumnType("uuid");
 
                     b.Property<string>("Address")
                         .IsRequired()
@@ -238,10 +236,6 @@ namespace finalProjectDB.Migrations
                         .HasDefaultValueSql("now()");
 
                     b.Property<string>("CustomerName")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Email")
                         .IsRequired()
                         .HasColumnType("text");
 
@@ -314,9 +308,6 @@ namespace finalProjectDB.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean");
 
-                    b.Property<DateTime>("LastUpdated")
-                        .HasColumnType("timestamp with time zone");
-
                     b.Property<string>("MobilePhoneNumber")
                         .IsRequired()
                         .HasColumnType("Varchar(10)");
@@ -342,6 +333,33 @@ namespace finalProjectDB.Migrations
                     b.HasIndex("ProvinceId");
 
                     b.ToTable("Doctor");
+                });
+
+            modelBuilder.Entity("FinalProjectDB.EmailStatus", b =>
+                {
+                    b.Property<int>("ValidationUserId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("ValidationUserId"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("timestamp with time zone")
+                        .HasDefaultValueSql("now()");
+
+                    b.Property<string>("Email")
+                        .HasColumnType("text");
+
+                    b.Property<string>("OtpCode")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Status")
+                        .HasColumnType("text");
+
+                    b.HasKey("ValidationUserId");
+
+                    b.ToTable("EmailStatus");
                 });
 
             modelBuilder.Entity("FinalProjectDB.Gender", b =>

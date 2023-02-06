@@ -112,8 +112,8 @@ namespace FinalProjectApi
                 return Requests.Response(
                     this,
                     new ApiStatus(200),
-                    chargeSuccessDto,
-                    ""
+                    "Success",
+                    chargeSuccessDto
                 );
             }
             catch (Exception ex)
@@ -134,8 +134,8 @@ namespace FinalProjectApi
                 return Requests.Response(
                     this,
                     new ApiStatus(200),
-                    successDto,
-                    ""
+                    "success",
+                    successDto
                 );
             }
             catch (Exception ex)
@@ -155,8 +155,8 @@ namespace FinalProjectApi
                 return Requests.Response(
                     this,
                     new ApiStatus(200),
-                    chargeSuccessDto,
-                    ""
+                    "Charge Created",
+                    chargeSuccessDto
                 );
             }
             catch (Exception ex)
@@ -171,14 +171,14 @@ namespace FinalProjectApi
             try
             {
                 var data = await _billAppService.CancelCharge(orderId);
-                ChargeSuccessDto chargeSuccessDto = new ChargeSuccessDto();
-                chargeSuccessDto = JsonConvert.DeserializeObject<ChargeSuccessDto>(data);
+                // ChargeSuccessDto chargeSuccessDto = new ChargeSuccessDto();
+                // chargeSuccessDto = JsonConvert.DeserializeObject<ChargeSuccessDto>(data);
 
                 return Requests.Response(
                     this,
                     new ApiStatus(200),
-                    chargeSuccessDto,
-                    ""
+                    "success",
+                    $"order with id {orderId} canceled"
                 );
             }
             catch (Exception ex)
